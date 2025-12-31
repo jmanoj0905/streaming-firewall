@@ -1,0 +1,83 @@
+services:
+  zookeeper:
+    image: zookeeper:3.9
+    container_name: zookeeper
+    platform: linux/arm64
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - bigdata
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.1-1-ubi8.arm64
+    container_name: kafka
+    platform: linux/arm64
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - bigdata
+    restart: unless-stopped
+
+  spark-master:
+    image: arm64v8/spark:3.5.7
+    container_name: spark-master
+    platform: linux/arm64
+    volumes:
+      - ./spark/ivy-cache:/opt/spark/.ivy2
+      - ./streaming-firewall:/opt/spark/work
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    environment:
+      SPARK_MASTER_HOST: spark-master
+      SPARK_MASTER_PORT: 7077
+      SPARK_MASTER_WEBUI_PORT: 8080
+      SPARK_HOME: /opt/spark
+      SPARK_LOCAL_DIRS: /opt/spark/work
+    networks:
+      - bigdata
+    restart: unless-stopped
+
+  spark-worker:
+    image: arm64v8/spark:3.5.7
+    container_name: spark-worker
+    platform: linux/arm64
+    depends_on:
+      - spark-master
+    volumes:
+      - ./spark/ivy-cache:/opt/spark/.ivy2
+      - ./streaming-firewall:/opt/spark/work
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    ports:
+      - "8081:8081"
+    environment:
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 2g
+      SPARK_WORKER_PORT: 8081
+      SPARK_WORKER_WEBUI_PORT: 8081
+    networks:
+      - bigdata
+    restart: unless-stopped
+
+networks:
+  bigdata:
+    driver: bridge

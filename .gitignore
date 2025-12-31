@@ -1,0 +1,42 @@
+# ===============================
+# Spark runtime / application data
+# ===============================
+app-*/
+spark-*/
+tmp/
+checkpoint/
+checkpoint-*/
+
+# Spark logs and output
+stderr
+stdout
+
+# ===============================
+# Kafka / Docker runtime
+# ===============================
+data/
+logs/
+
+# ===============================
+# Python
+# ===============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# ===============================
+# OS / Editor
+# ===============================
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# ===============================
+# Misc
+# ===============================
+*.log
