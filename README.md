@@ -1,4 +1,4 @@
-# Streaming Firewall – Kafka + Spark Structured Streaming
+# Streaming Firewall
 
 A real-time **streaming firewall** built using **Apache Kafka** and **Apache Spark Structured Streaming**.
 The system validates incoming event logs, enforces schema and rule-based checks, and routes traffic into **clean** and **quarantine** streams for downstream consumption and monitoring.
