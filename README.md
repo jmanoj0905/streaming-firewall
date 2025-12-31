@@ -22,8 +22,7 @@ This project focuses on **stream processing and data quality enforcement**, not 
 
 ### Architecture Diagram
 
-[https://raw.githubusercontent.com/jmanoj0905/streaming-firewall/main/architecture.png](https://raw.githubusercontent.com/jmanoj0905/streaming-firewall/main/architecture.png)
-
+![Architecture](architecture.png)
 ---
 
 ## Project Structure
