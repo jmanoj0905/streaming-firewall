@@ -1,13 +1,13 @@
 {
-  "event_id": "uuid",
-  "source": "web",
-  "level": "INFO",
-  "message": "User login success",
-  "timestamp": "2025-12-16T10:30:00Z"
+  "event_id": "uuid-v4 string (required)",
+  "source": "producer | servers",
+  "level": "INFO | WARN | ERROR",
+  "message": "string payload",
+  "timestamp": "ISO-8601 timestamp in IST (+05:30)"
 }
 
 event_id → unique id
 source → producer name
 level → INFO | WARN | ERROR
 message → payload
-timestamp → ISO-8601 UTC
+timestamp → ISO-8601 IST
